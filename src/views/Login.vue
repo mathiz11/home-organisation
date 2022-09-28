@@ -41,10 +41,12 @@ export default {
         <form @submit.prevent="login">
             <Input id="email" label="Email" type="text" v-model="email" />
             <Input id="password" label="Mot de passe" type="password" v-model="password" />
-            <button class="bg-green-400 px-5 py-2 rounded-md mt-2 text-white"
-                :disabled="!email.trim() || !password.trim()">
-                Se connecter
-            </button>
+            <div class="flex justify-center">
+                <button class="bg-green-400 px-5 py-2 rounded-md mt-1 text-white"
+                    :disabled="!email.trim() || !password.trim()">
+                    Se connecter
+                </button>
+            </div>
         </form>
     </div>
 </template>

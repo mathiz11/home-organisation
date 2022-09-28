@@ -12,7 +12,7 @@ export default {
 
 <template>
     <div class="flex flex-col mb-4">
-        <label v-if="label" :for="id" class="m-1">{{ label }}</label>
+        <label :for="id" class="my-1">{{ label }}</label>
         <input :id="id" :type="type" class="border rounded py-1 px-2" :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)" />
     </div>

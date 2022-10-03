@@ -78,7 +78,7 @@ export default {
         <div v-for="todo in todos" class="border-b flex items-center py-2">
             <input type="checkbox" @change="handleCheck(todo)" :checked="todo.isDone" class="mr-2" />
             <span>{{ todo.name }}</span>
-            <button class="ml-auto bg-red-500 text-white px-2 py-1 rounded-md"
+            <button class="ml-auto text-sm bg-red-500 text-white px-2 py-1 rounded-md"
                 @click="this.todoToDelete = todo">Suppr</button>
         </div>
     </div>

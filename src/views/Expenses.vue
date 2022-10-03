@@ -4,9 +4,8 @@ import { firebaseApp } from "../firebase"
 import dateUtils from "../utils/dateUtils"
 
 const db = getDatabase(firebaseApp)
-const dateOfMonth = dateUtils.format(new Date()).slice(0, 8)
+const now = new Date()
 const expensesRef = ref(db, "expenses")
-const expensesQuery = query(expensesRef, orderByChild("date"), startAt(dateOfMonth + '00'), endAt(dateOfMonth + '31'))
 const usersQuery = query(ref(db, "users"))
 
 export default {
@@ -18,6 +17,9 @@ export default {
             expenseToDelete: undefined,
             loading: true,
             unsubscriber: undefined,
+            months: dateUtils.monthList,
+            selectedMonth: dateUtils.monthList[now.getMonth()],
+            expensesQuery: query(expensesRef, orderByChild("date"), startAt(dateUtils.format(now).slice(0, 8) + '00'), endAt(dateUtils.format(now).slice(0, 8) + '31'))
         };
     },
     async mounted() {
@@ -30,10 +32,11 @@ export default {
             console.error(reason)
         }
 
-        this.unsubscriber = onValue(expensesQuery, snapshot => {
+        this.unsubscriber = onValue(this.expensesQuery, snapshot => {
             if (snapshot.exists()) {
                 this.updateExpenses(snapshot.val())
             }
+            this.loading = false
         }, (error) => {
             console.error(error)
         })
@@ -41,6 +44,25 @@ export default {
     unmounted() {
         if (this.unsubscriber) {
             this.unsubscriber();
+        }
+    },
+    watch: {
+        async selectedMonth(newSelectedMonth) {
+            const newMonthNumber = this.months.indexOf(newSelectedMonth)
+            now.setMonth(newMonthNumber)
+            const dateOfMonth = dateUtils.format(now).slice(0, 8)
+            this.expensesQuery = query(expensesRef, orderByChild("date"), startAt(dateOfMonth + '00'), endAt(dateOfMonth + '31'))
+            try {
+                const response = await get(this.expensesQuery)
+                if (response.exists()) {
+                    this.updateExpenses(response.val())
+                } else if (this.expenses.length > 0) {
+                    this.expenses.length = 0
+                    this.users.length = 0
+                }
+            } catch (reason) {
+                console.error(reason)
+            }
         }
     },
     methods: {
@@ -62,8 +84,6 @@ export default {
                     totalExpenses
                 }
             })
-
-            this.loading = false
         },
         getPaymentPhrase() {
             const firstUser = this.users.at(0);
@@ -92,7 +112,10 @@ export default {
 </script>
 
 <template>
-    <h1 class="text-3xl pb-7">Dépenses du mois</h1>
+    <h1 class="text-3xl pb-5">Dépenses du mois</h1>
+    <select id="selectedMonth" v-model="selectedMonth" class="border rounded py-1 px-2 mb-5">
+        <option v-for="month in months">{{ month }}</option>
+    </select>
     <div v-if="!loading" class="flex items-center mb-5">
         <div v-for="user in users" class="flex flex-col items-center border rounded px-5 py-3 mr-4">
             <span class="font-bold">{{ user.name }}</span>

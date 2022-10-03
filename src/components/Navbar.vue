@@ -25,8 +25,8 @@ export default {
         <router-link to="/todo">Liste</router-link>
 
         <div class="ml-auto">
-            <button class="bg-white text-red-500 border border-red-500 px-3 py-2 rounded-md"
-                @click="logout">Déconnecter</button>
+            <button class="bg-white text-red-500 border border-red-500 px-3 py-2 rounded-md" @click="logout">Se
+                déconnecter</button>
         </div>
     </header>
 </template>

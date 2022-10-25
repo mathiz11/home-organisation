@@ -19,6 +19,8 @@ export default {
         this.unsubscriber = onValue(todosRef, snapshot => {
             if (snapshot.exists()) {
                 this.updateTodos(snapshot.val())
+            } else if (this.todos.length) {
+                this.todos = []
             }
         })
     },
@@ -85,7 +87,7 @@ export default {
     <div v-if="todoToDelete" class="fixed top-0 left-0 w-full h-full z-10 backdrop-blur-sm">
         <div class="bg-white rounded-lg my-8 mx-auto p-5 w-3/4 border-2 border-black ">
             <h2 class="text-2xl mb-5">Suppression</h2>
-            <p class="mb-5">Voulez-vous supprimer la tâche <span class="font-bold">{{ todoToDelete.name}}</span></p>
+            <p class="mb-5">Voulez-vous supprimer la tâche <span class="font-bold">{{ todoToDelete.name }}</span></p>
             <button class="bg-red-500 px-5 py-2 rounded-md text-white mr-2"
                 @click="deleteTodo">Supprimer</button><button class="border-2 px-5 py-2 rounded-md"
                 @click="todoToDelete = undefined">Fermer</button>
